@@ -5,6 +5,7 @@ import SongListPage from "@/pages/SongListPage";
 import AddSongPage from "@/pages/AddSongPage";
 import LoginPage from "@/pages/LoginPage";
 import AuthCallbackPage from "@/pages/AuthCallbackPage";
+import MyPage from "@/pages/MyPage";
 
 export const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ export const router = createBrowserRouter([
         path: "/songs/new",
         element: <AddSongPage />,
       },
+      {
+        path: "/mypage",
+        element: <MyPage />,
+      }
     ],
   },
 ]);
