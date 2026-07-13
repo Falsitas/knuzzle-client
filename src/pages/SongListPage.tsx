@@ -5,6 +5,7 @@ import { getSongs } from "@/api/songs";
 import SongCard from "@/components/SongCard";
 
 import type { Song } from "@/types/song";
+import AddSongFab from "@/components/AddSongFAB";
 // import { useAuthStore } from "@/store/authStore";
 
 export default function SongListPage() {
@@ -60,6 +61,8 @@ export default function SongListPage() {
             />
           ))
         )}
+
+        <AddSongFab />
 
       </div>
     </main>

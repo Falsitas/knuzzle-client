@@ -25,3 +25,9 @@ export async function getMe() {
 
   return data;
 }
+
+export async function getVocals() {
+  const { data } = await api.get("users/?primarySession=VOCAL")
+
+  return data;
+}

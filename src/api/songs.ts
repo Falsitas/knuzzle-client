@@ -8,6 +8,8 @@ export async function getSongs() {
 export async function createSong(payload: {
   title: string;
   artist: string;
+  referenceUrl: string;
+  vocalId?: number;
 }) {
   const { data } = await api.post("/songs", payload);
   return data;

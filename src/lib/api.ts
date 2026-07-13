@@ -14,3 +14,41 @@ api.interceptors.request.use((config) => {
 
   return config;
 });
+
+api.interceptors.request.use((config) => {
+  console.log("[Request]", {
+    url: config.url,
+    method: config.method,
+    params: config.params,
+    data: config.data,
+  });
+
+  return config;
+})
+
+api.interceptors.response.use(
+  (response) => {
+    console.log("[Response]", {
+      url: response.config.url,
+      method: response.config.method,
+      status: response.status,
+      data: response.data,
+    });
+
+    return response;
+  },
+  (error) => {
+    if (error.response) {
+      console.error("[Response Error]", {
+        url: error.config?.url,
+        method: error.config?.method,
+        status: error.response.status,
+        data: error.response.data,
+      });
+    } else {
+      console.error("[Network Error]", error.message);
+    }
+
+    return Promise.reject(error);
+  }
+);
