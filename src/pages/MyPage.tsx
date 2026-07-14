@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 
 import LogoutButton from "@/components/LogoutButton";
+// import SongCard from "@/components/SongCard";
 
 const sessions: Session[] = [
   "VOCAL",
@@ -112,7 +113,7 @@ export default function MyPage() {
           </p>
           {user?.votes.map((vote) => (
             <div key={vote.id}>
-              {vote.voteType}
+              <SongCard song={vote.song} />
             </div>
           ))}
         </div> */}

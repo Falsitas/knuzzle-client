@@ -71,9 +71,32 @@ export default function CreateSongPage() {
   }, []);
 
   const handleCreate = async () => {
+    if (!title) {
+      alert("제목을 적어주세요.");
+      return;
+    }
+
+    if (!artist) {
+      alert("아티스트명을 적어주세요.");
+      return;
+    }
+
     if (vocalId === undefined) {
       alert("보컬을 선택해주세요.");
       return;
+    }
+
+    if (!referenceUrl) {
+      alert("레퍼런스URL을 입력해주세요.");
+    }
+
+    if (referenceUrl) {
+      try {
+        new URL(referenceUrl);
+      } catch {
+        alert("올바른 URL을 입력해주세요.");
+        return;
+      }
     }
 
     await createSong({
