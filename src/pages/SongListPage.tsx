@@ -121,7 +121,7 @@ export default function SongListPage() {
             variant={showOnlyVoted ? "default" : "outline"}
             onClick={() => setShowOnlyVoted(!showOnlyVoted)}
           >
-            내가 투표한 곡
+            내 선택
           </Button>
 
           <Button
