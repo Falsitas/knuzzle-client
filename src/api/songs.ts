@@ -1,4 +1,5 @@
 import { api } from "@/lib/api";
+import type { Session } from "@/api/users";
 
 export async function getSongs() {
   const response = await api.get("/songs");
@@ -10,6 +11,10 @@ export async function createSong(payload: {
   artist: string;
   referenceUrl: string;
   vocalId?: number;
+  requiredParts: {
+    session: Session;
+    count: number;
+  }[];
 }) {
   const { data } = await api.post("/songs", payload);
   return data;
