@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/authStore";
 
+import type { Session } from "@/types/session";
 import {
   updatePrimarySession,
-  type Session,
 } from "@/api/users";
 
 import {
@@ -53,6 +53,8 @@ export default function MyPage() {
   if (!user) {
     return <div>로그인 정보가 없습니다.</div>;
   }
+
+  console.log(user.votes);
 
   return (
     <main className="min-h-screen bg-background">
@@ -103,6 +105,17 @@ export default function MyPage() {
             </SelectContent>
           </Select>
         </div>
+
+        {/* <div>
+          <p className="text-sm text-muted-foreground">
+            투표 내용
+          </p>
+          {user?.votes.map((vote) => (
+            <div key={vote.id}>
+              {vote.voteType}
+            </div>
+          ))}
+        </div> */}
 
         <Button
           disabled={

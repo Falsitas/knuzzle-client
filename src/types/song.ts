@@ -1,3 +1,6 @@
+import type { Session } from "@/types/session";
+import type { VoteType } from "@/types/votetype";
+
 export interface Song {
   id: number;
   title: string;
@@ -16,17 +19,13 @@ export interface Song {
   } | null;
 
   votes: {
-    user: {
-      id: number;
-      nickname: string;
-    };
-    voteType: string;
-    session: string;
+    voteType: VoteType;
+    session: Session;
     sessionDetail: string | null;
   }[];
 
   requiredParts: {
-    session: number;
-    count: string;
+    session: Session;
+    count: number;
   }[];
 }

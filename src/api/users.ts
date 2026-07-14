@@ -1,11 +1,5 @@
 import { api } from "@/lib/api";
-
-export type Session =
-  | "VOCAL"
-  | "GUITAR"
-  | "KEYBOARD"
-  | "BASS"
-  | "DRUM";
+import type { Session } from "@/types/session";
 
 export async function updatePrimarySession(
   session: Session,

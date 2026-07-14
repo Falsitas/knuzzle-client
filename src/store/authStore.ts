@@ -1,5 +1,16 @@
 import { create } from "zustand";
-import { getMe, type Session } from "@/api/users";
+import { getMe } from "@/api/users";
+import type { Session } from "@/types/session";
+import type { Song } from "@/types/song";
+import type { VoteType } from "@/types/votetype";
+
+interface Vote {
+  id: number;
+  song: Song;
+  voteType: VoteType;
+  session: Session;
+  sessionDetail: string;
+}
 
 interface User {
   id: number;
@@ -7,6 +18,9 @@ interface User {
   nickname: string;
   role: string;
   primarySession?: Session | null;
+  createdSongs: Song[];
+  vocalSongs: Song[];
+  votes: Vote[];
 }
 
 interface AuthState {

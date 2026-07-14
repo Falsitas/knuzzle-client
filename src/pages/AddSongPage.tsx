@@ -10,8 +10,8 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 import { InstrumentCard } from "@/components/InstrumentCard";
-
-import { getVocals, type Session } from "@/api/users";
+import { getVocals } from "@/api/users";
+import type { Session } from "@/types/session";
 import { createSong } from "@/api/songs";
 
 import type { User } from "@/types/user";

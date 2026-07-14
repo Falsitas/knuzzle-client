@@ -1,5 +1,5 @@
 import { api } from "@/lib/api";
-import type { Session } from "@/api/users";
+import type { Session } from "@/types/session";
 
 export async function getSongs() {
   const response = await api.get("/songs");
