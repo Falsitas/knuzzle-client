@@ -36,6 +36,7 @@ export default function CreateSongPage() {
     }[]
   >([]);
 
+  // max count of instruments
   const instruments = [
     {
       session: "GUITAR" as Session,
