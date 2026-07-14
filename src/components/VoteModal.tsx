@@ -15,6 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/store/authStore";
 import type { Session } from "@/types/session";
+import { getMe } from "@/api/users";
 
 type VoteModalProps = {
   open: boolean;
@@ -44,8 +45,8 @@ export default function VoteModal({
   myVote,
 }: VoteModalProps) {
   const queryClient = useQueryClient();
-
   const user = useAuthStore((state) => state.user);
+  const setUser = useAuthStore((state) => state.setUser);
 
   const [sessionDetail, setSessionDetail] = useState(
     myVote?.sessionDetail ?? "",
@@ -64,6 +65,9 @@ export default function VoteModal({
     mutationFn: upsertVote,
 
     onSuccess: async () => {
+      const updatedUser = await getMe();
+      setUser(updatedUser);
+      
       await queryClient.invalidateQueries({
         queryKey: ["songs"],
       });

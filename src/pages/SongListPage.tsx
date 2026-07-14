@@ -10,11 +10,17 @@ import type { User } from "@/types/user";
 import { getVocals } from "@/api/users";
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
+import { useAuthStore } from "@/store/authStore";
 // import { useAuthStore } from "@/store/authStore";
 
 export default function SongListPage() {
+  const user = useAuthStore((state) => state.user);
+  const votedSongIds = new Set(
+    user?.votes?.map((vote) => vote.song.id) ?? []
+  );
   const navigate = useNavigate();
   const [selectedVocalId, setSelectedVocalId] = useState<number | null>(null);
+  const [showOnlyVoted, setShowOnlyVoted] = useState(false);
   const {
     data: songs,
     isPending,
@@ -31,18 +37,22 @@ export default function SongListPage() {
     queryFn: getVocals,
   });
 
-  const filteredSongs = selectedVocalId
-    ? songs?.filter(
-        (song) =>
-          song.vocal?.id === selectedVocalId
-      )
-    : songs;
-  
-  // const user = useAuthStore(
-  //   (state) => state.user
-  // );
+  // 보일 song list
+  let filteredSongs = songs ?? [];
 
-  // console.log(user);
+  // 보컬 필터
+  if (selectedVocalId) {
+    filteredSongs = filteredSongs.filter(
+      (song) => song.vocal?.id === selectedVocalId
+    );
+  }
+
+  // 내가 투표한 곡만
+  if (showOnlyVoted) {
+    filteredSongs = filteredSongs.filter((song) =>
+      votedSongIds.has(song.id)
+    );
+  }
 
   if (isPending) {
     return <div>Loading...</div>;
@@ -106,6 +116,13 @@ export default function SongListPage() {
               )}
             </SelectContent>
           </Select>
+
+          <Button
+            variant={showOnlyVoted ? "default" : "outline"}
+            onClick={() => setShowOnlyVoted(!showOnlyVoted)}
+          >
+            내가 투표한 곡
+          </Button>
 
           <Button
             variant="outline"

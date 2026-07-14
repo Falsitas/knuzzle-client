@@ -18,8 +18,10 @@ import type { User } from "@/types/user";
 
 import { GiDrumKit, GiGuitar } from "react-icons/gi";
 import { PiPianoKeysFill } from "react-icons/pi";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function CreateSongPage() {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
@@ -105,6 +107,10 @@ export default function CreateSongPage() {
       referenceUrl,
       vocalId,
       requiredParts,
+    });
+
+    await queryClient.invalidateQueries({
+      queryKey: ["songs"],
     });
 
     navigate("/");
