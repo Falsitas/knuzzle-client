@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-
+import { useQueryClient } from "@tanstack/react-query";
 import { upsertVote } from "@/api/votes";
 import type { VoteType } from "@/types/votetype";
 
@@ -43,6 +43,8 @@ export default function VoteModal({
   requiredParts,
   myVote,
 }: VoteModalProps) {
+  const queryClient = useQueryClient();
+
   const user = useAuthStore((state) => state.user);
 
   const [sessionDetail, setSessionDetail] = useState(
@@ -57,11 +59,15 @@ export default function VoteModal({
     (user?.primarySession === "GUITAR" ||
       user?.primarySession === "KEYBOARD") &&
     (myRequiredPart?.count ?? 0) > 1;
-
+    
   const voteMutation = useMutation({
     mutationFn: upsertVote,
 
-    onSuccess: () => {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["songs"],
+      });
+
       onOpenChange(false);
     },
 
