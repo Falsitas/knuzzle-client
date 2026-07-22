@@ -27,6 +27,9 @@ export default function EditSongPage() {
     await queryClient.invalidateQueries({
       queryKey: ["songs"],
     });
+    await queryClient.invalidateQueries({
+      queryKey: ["song", id],
+    });
 
     navigate("/");
   };
