@@ -49,11 +49,14 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (!token) {
       return;
     }
-
-    const user = await getMe();
-
-    set({
-      user,
-    });
+    
+    try {
+      const user = await getMe();
+      set({
+        user,
+      });
+    } catch(e) {
+      console.log(e)
+    }
   },
 }));

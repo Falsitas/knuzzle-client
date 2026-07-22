@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/store/authStore";
 import axios from "axios";
 
 export const api = axios.create({
@@ -5,6 +6,7 @@ export const api = axios.create({
   withCredentials: true,
 });
 
+// access token
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("accessToken");
 
@@ -15,6 +17,23 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// handle 401
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("accessToken");
+
+      useAuthStore.getState().clearUser();
+
+      window.location.href = "/login";
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+// request logger
 api.interceptors.request.use((config) => {
   console.log("[Request]", {
     url: config.url,
@@ -26,6 +45,7 @@ api.interceptors.request.use((config) => {
   return config;
 })
 
+// reponse logger
 api.interceptors.response.use(
   (response) => {
     console.log("[Response]", {

@@ -5,10 +5,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import type { Song } from "@/types/song";
 import { useState } from "react";
 import VoteModal from "./VoteModal";
+import { useAuthStore } from "@/store/authStore";
+import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
+import { Pencil, Trash2 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { deleteSong } from "@/api/songs";
+import axios from "axios";
 
 interface SongCardProps {
   song: Song;
@@ -17,18 +34,104 @@ interface SongCardProps {
 export default function SongCard({ song }: SongCardProps) {
   const [isVoteModalOpen, setIsVoteModalOpen] = useState(false);
   const myVote = song.votes[0];
+  const user = useAuthStore((state) => state.user);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteSong(song.id);
+
+      await queryClient.invalidateQueries({
+        queryKey: ["songs"],
+      });
+    } catch (e: unknown) {
+      console.log(e);
+      if (axios.isAxiosError(e)) {
+        alert(
+          e.response?.data?.message ??
+            "삭제에 실패했습니다."
+        );
+      } else {
+        alert("삭제에 실패했습니다.");
+      }
+    } finally {
+      setIsDeleting(false);
+      setOpen(false);
+    }
+  };
 
   return (
     <div>
-      <Card>
+      <Card className="relative">
         <CardHeader>
-          <CardTitle>
-            {song.title}
-          </CardTitle>
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
+              <CardTitle>{song.title}</CardTitle>
 
-          <CardDescription>
-            {song.artist}
-          </CardDescription>
+              <CardDescription>
+                {song.artist}
+              </CardDescription>
+            </div>
+
+            {user?.id === song.createdBy.id && (
+              <div className="flex shrink-0 gap-1">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => navigate(`/songs/${song.id}/edit`)}
+                >
+                  <Pencil className="size-5" />
+                </Button>
+                <AlertDialog
+                  open={open}
+                  onOpenChange={setOpen}
+                >
+                  <AlertDialogTrigger
+                    className="inline-flex w-10 items-center justify-center hover:bg-accent"
+                  >
+                      <Trash2 className="size-5 text-red-500" />
+                  </AlertDialogTrigger>
+
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        곡을 삭제하시겠습니까?
+                      </AlertDialogTitle>
+
+                      <AlertDialogDescription>
+                        삭제한 곡은 복구할 수 없습니다.
+                        <br />
+                        투표가 있는 곡은 삭제할 수 없습니다.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+
+                    <AlertDialogFooter>
+                      <AlertDialogCancel
+                        variant="outline"
+                        size="default"
+                      >
+                        취소
+                      </AlertDialogCancel>
+
+                      <AlertDialogAction
+                        variant="destructive"
+                        size="default"
+                        disabled={isDeleting}
+                        onClick={handleDelete}
+                      >
+                        {isDeleting ? "삭제 중..." : "삭제"}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            )}
+          </div>
+
           <CardDescription>
             <a
               href={song.referenceUrl}

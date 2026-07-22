@@ -29,3 +29,14 @@ export interface Song {
     count: number;
   }[];
 }
+
+export interface SongPayload {
+  title: string;
+  artist: string;
+  referenceUrl: string;
+  vocalId?: number;
+  requiredParts: {
+    session: Session;
+    count: number;
+  }[];
+}

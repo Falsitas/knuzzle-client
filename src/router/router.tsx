@@ -2,10 +2,11 @@ import { createBrowserRouter } from "react-router-dom";
 
 import ProtectedRoute from "./ProtectedRoute";
 import SongListPage from "@/pages/SongListPage";
-import AddSongPage from "@/pages/AddSongPage";
+import CreateSongPage from "@/pages/CreateSongPage";
 import LoginPage from "@/pages/LoginPage";
 import AuthCallbackPage from "@/pages/AuthCallbackPage";
 import MyPage from "@/pages/MyPage";
+import EditSongPage from "@/pages/EditSongPage";
 
 export const router = createBrowserRouter([
   {
@@ -25,12 +26,16 @@ export const router = createBrowserRouter([
       },
       {
         path: "/songs/new",
-        element: <AddSongPage />,
+        element: <CreateSongPage />,
       },
       {
         path: "/mypage",
         element: <MyPage />,
-      }
+      },
+      {
+        path: "/songs/:id/edit",
+        element: <EditSongPage />,
+      },
     ],
   },
 ]);

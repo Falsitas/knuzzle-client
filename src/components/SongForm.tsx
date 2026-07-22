@@ -9,36 +9,46 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
+
 import { InstrumentCard } from "@/components/InstrumentCard";
+
 import { getVocals } from "@/api/users";
-import type { Session } from "@/types/session";
-import { createSong } from "@/api/songs";
 
 import type { User } from "@/types/user";
+import type { Session } from "@/types/session";
+import type { SongPayload } from "@/types/song";
 
 import { GiDrumKit, GiGuitar } from "react-icons/gi";
 import { PiPianoKeysFill } from "react-icons/pi";
-import { useQueryClient } from "@tanstack/react-query";
 
-export default function CreateSongPage() {
-  const queryClient = useQueryClient();
+interface SongFormProps {
+  initialValue: SongPayload;
+  submitText: string;
+  onSubmit: (payload: SongPayload) => Promise<void>;
+}
+
+export default function SongForm({
+  initialValue,
+  submitText,
+  onSubmit,
+}: SongFormProps) {
   const navigate = useNavigate();
 
-  const [title, setTitle] = useState("");
-  const [artist, setArtist] = useState("");
-  const [referenceUrl, setReferenceUrl] = useState("");
+  const [title, setTitle] = useState(initialValue.title);
+  const [artist, setArtist] = useState(initialValue.artist);
+  const [referenceUrl, setReferenceUrl] = useState(
+    initialValue.referenceUrl ?? ""
+  );
 
   const [vocals, setVocals] = useState<User[]>([]);
-  const [vocalId, setVocalId] = useState<number>();
+  const [vocalId, setVocalId] = useState<number | undefined>(
+    initialValue.vocalId
+  );
 
-  const [requiredParts, setRequiredParts] = useState<
-    {
-      session: Session;
-      count: number;
-    }[]
-  >([]);
+  const [requiredParts, setRequiredParts] = useState(
+    initialValue.requiredParts
+  );
 
-  // max count of instruments
   const instruments = [
     {
       session: "GUITAR" as Session,
@@ -66,13 +76,15 @@ export default function CreateSongPage() {
     },
   ];
 
-  const selected = vocals.find((v) => v.id === vocalId);
+  const selected = vocals.find(
+    (v) => v.id === vocalId
+  );
 
   useEffect(() => {
     getVocals().then(setVocals);
   }, []);
 
-  const handleCreate = async () => {
+    const handleSubmit = async () => {
     if (!title) {
       alert("제목을 적어주세요.");
       return;
@@ -89,31 +101,24 @@ export default function CreateSongPage() {
     }
 
     if (!referenceUrl) {
-      alert("레퍼런스URL을 입력해주세요.");
+      alert("레퍼런스 URL을 입력해주세요.");
+      return;
     }
 
-    if (referenceUrl) {
-      try {
-        new URL(referenceUrl);
-      } catch {
-        alert("올바른 URL을 입력해주세요.");
-        return;
-      }
+    try {
+      new URL(referenceUrl);
+    } catch {
+      alert("올바른 URL을 입력해주세요.");
+      return;
     }
 
-    await createSong({
+    await onSubmit({
       title,
       artist,
       referenceUrl,
       vocalId,
       requiredParts,
     });
-
-    await queryClient.invalidateQueries({
-      queryKey: ["songs"],
-    });
-
-    navigate("/");
   };
 
   const handleInstrumentClick = (
@@ -125,11 +130,8 @@ export default function CreateSongPage() {
         (part) => part.session === session
       );
 
-      const nextCount =
-        current?.count ?? 0;
-
-      const newCount =
-        (nextCount + 1) % (max + 1);
+      const nextCount = current?.count ?? 0;
+      const newCount = (nextCount + 1) % (max + 1);
 
       if (newCount === 0) {
         return prev.filter(
@@ -206,7 +208,8 @@ export default function CreateSongPage() {
           <div className="grid grid-cols-2 gap-4">
             {instruments.map((instrument) => {
               const selected = requiredParts.find(
-                (part) => part.session === instrument.session
+                (part) =>
+                  part.session === instrument.session
               );
 
               return (
@@ -231,14 +234,16 @@ export default function CreateSongPage() {
         <Input
           placeholder="레퍼런스 링크"
           value={referenceUrl}
-          onChange={(e) => setReferenceUrl(e.target.value)}
+          onChange={(e) =>
+            setReferenceUrl(e.target.value)
+          }
         />
 
         <Button
           className="w-full"
-          onClick={handleCreate}
+          onClick={handleSubmit}
         >
-          등록
+          {submitText}
         </Button>
       </div>
     </main>
