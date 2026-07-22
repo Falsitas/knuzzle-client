@@ -22,7 +22,7 @@ import VoteModal from "./VoteModal";
 import { useAuthStore } from "@/store/authStore";
 import { Button } from "./ui/button";
 import { useNavigate } from "react-router-dom";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, Star } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { deleteSong } from "@/api/songs";
 import axios from "axios";
@@ -161,19 +161,23 @@ export default function SongCard({ song }: SongCardProps) {
                   내 투표
                 </div>
 
-                {myVote.voteType === "LIKE"
-                  ? <div className="flex text-sm font-semibold text-orange-600">
-                      하고싶다
-                      {myVote.sessionDetail && (
-                        <div className="text-muted-foreground ml-3">
-                          {myVote.sessionDetail}
-                        </div>
-                      )}
+                <div className="flex text-sm font-semibold">
+                  {[1, 2, 3, 4, 5].map((value) => (
+                    <Star
+                      key={value}
+                      className={`size-5 ${
+                        myVote.rating >= value
+                          ? "fill-yellow-400 text-yellow-400"
+                          : "text-gray-300"
+                      }`}
+                    />
+                  ))}
+                  {myVote.sessionDetail && (
+                    <div className="text-muted-foreground ml-3">
+                      {myVote.sessionDetail}
                     </div>
-                  : <div className="text-sm font-semibold text-blue-600">
-                      하기싫다
-                    </div>
-                }
+                  )}
+                </div>
               </div>
             )}
 
@@ -208,6 +212,7 @@ export default function SongCard({ song }: SongCardProps) {
 
       {isVoteModalOpen && (
         <VoteModal
+          key={myVote?.rating ?? "new"}
           open={isVoteModalOpen}
           onOpenChange={setIsVoteModalOpen}
           songId={song.id}

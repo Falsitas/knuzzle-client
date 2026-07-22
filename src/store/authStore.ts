@@ -2,12 +2,11 @@ import { create } from "zustand";
 import { getMe } from "@/api/users";
 import type { Session } from "@/types/session";
 import type { Song } from "@/types/song";
-import type { VoteType } from "@/types/votetype";
 
 interface Vote {
   id: number;
   song: Song;
-  voteType: VoteType;
+  rating: number;
   session: Session;
   sessionDetail: string;
 }

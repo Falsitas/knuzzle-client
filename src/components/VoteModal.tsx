@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { upsertVote } from "@/api/votes";
-import type { VoteType } from "@/types/votetype";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/store/authStore";
 import type { Session } from "@/types/session";
 import { getMe } from "@/api/users";
+import { Star } from "lucide-react";
 
 type VoteModalProps = {
   open: boolean;
@@ -30,7 +29,7 @@ type VoteModalProps = {
   }[];
 
   myVote?: {
-    voteType: VoteType;
+    rating: number;
     session: Session;
     sessionDetail: string | null;
   };
@@ -48,8 +47,10 @@ export default function VoteModal({
   const user = useAuthStore((state) => state.user);
   const setUser = useAuthStore((state) => state.setUser);
 
+  const [rating, setRating] = useState(myVote?.rating ?? 0);
+
   const [sessionDetail, setSessionDetail] = useState(
-    myVote?.sessionDetail ?? "",
+    myVote?.sessionDetail ?? ""
   );
 
   const myRequiredPart = requiredParts.find(
@@ -60,14 +61,14 @@ export default function VoteModal({
     (user?.primarySession === "GUITAR" ||
       user?.primarySession === "KEYBOARD") &&
     (myRequiredPart?.count ?? 0) > 1;
-    
+
   const voteMutation = useMutation({
     mutationFn: upsertVote,
 
     onSuccess: async () => {
       const updatedUser = await getMe();
       setUser(updatedUser);
-      
+
       await queryClient.invalidateQueries({
         queryKey: ["songs"],
       });
@@ -80,10 +81,14 @@ export default function VoteModal({
     },
   });
 
-  function handleVote(voteType: VoteType) {
+  function handleVote(rating: number) {
+    if(rating < 1 || rating > 5) {
+      alert("선호도를 골라주세요");
+      return;
+    }
     voteMutation.mutate({
       songId,
-      voteType,
+      rating,
       sessionDetail,
     });
   }
@@ -109,23 +114,52 @@ export default function VoteModal({
             />
           )}
 
+          <div className="flex items-center gap-1">
+            <DialogDescription>
+              하기싫다
+            </DialogDescription>
+
+            <div className="flex gap-1">
+              {[1, 2, 3, 4, 5].map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setRating(value)}
+                  disabled={voteMutation.isPending}
+                  className="disabled:opacity-50"
+                >
+                  <Star
+                    className={`size-8 ${
+                      rating >= value
+                        ? "fill-yellow-400 text-yellow-400"
+                        : "text-gray-300"
+                    }`}
+                  />
+                </button>
+              ))}
+            </div>
+            
+            <DialogDescription>
+              하고싶다
+            </DialogDescription>
+          </div>
+
           <div className="flex gap-2">
             <Button
-              variant={myVote?.voteType === "LIKE" ? "default" : "outline"}
+              variant="outline"
               className="flex-1"
-              onClick={() => handleVote("LIKE")}
+              onClick={() => onOpenChange(false)}
               disabled={voteMutation.isPending}
             >
-              {myVote?.voteType === "LIKE" ? "✓ 하고싶다" : "하고싶다"}
+              취소
             </Button>
 
             <Button
-              variant={myVote?.voteType === "DISLIKE" ? "default" : "outline"}
               className="flex-1"
-              onClick={() => handleVote("DISLIKE")}
-              disabled={voteMutation.isPending}
+              onClick={() => handleVote(rating)}
+              disabled={voteMutation.isPending || rating === 0}
             >
-              {myVote?.voteType === "DISLIKE" ? "✓ 하기싫다" : "하기싫다"}
+              확인
             </Button>
           </div>
         </div>

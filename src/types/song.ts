@@ -1,5 +1,4 @@
 import type { Session } from "@/types/session";
-import type { VoteType } from "@/types/votetype";
 
 export interface Song {
   id: number;
@@ -19,7 +18,7 @@ export interface Song {
   } | null;
 
   votes: {
-    voteType: VoteType;
+    rating: number;
     session: Session;
     sessionDetail: string | null;
   }[];
