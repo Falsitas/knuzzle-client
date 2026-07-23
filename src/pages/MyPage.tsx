@@ -72,12 +72,14 @@ export default function MyPage() {
             내 정보
           </h1>
 
+          {user.role === "ADMIN" ? 
           <Button
             variant="outline"
             onClick={() => navigate("/admin")}
           >
             관리자페이지
-          </Button>
+          </Button> : <div></div>}
+          
         </div>
         <div>
           <p className="text-sm text-muted-foreground">
