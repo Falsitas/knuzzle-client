@@ -71,6 +71,13 @@ export default function MyPage() {
           <h1 className="text-2xl font-bold">
             내 정보
           </h1>
+
+          <Button
+            variant="outline"
+            onClick={() => navigate("/admin")}
+          >
+            관리자페이지
+          </Button>
         </div>
         <div>
           <p className="text-sm text-muted-foreground">

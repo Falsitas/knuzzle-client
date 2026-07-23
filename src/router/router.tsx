@@ -7,6 +7,7 @@ import LoginPage from "@/pages/LoginPage";
 import AuthCallbackPage from "@/pages/AuthCallbackPage";
 import MyPage from "@/pages/MyPage";
 import EditSongPage from "@/pages/EditSongPage";
+import AdminPage from "@/pages/AdminPage";
 
 export const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ export const router = createBrowserRouter([
         path: "/songs/:id/edit",
         element: <EditSongPage />,
       },
+      {
+        path: "/admin",
+        element: <AdminPage />,
+      }
     ],
   },
 ]);
