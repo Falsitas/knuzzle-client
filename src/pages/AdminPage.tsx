@@ -71,11 +71,11 @@ export default function AdminPage() {
                 곡
               </TableHead>
 
-              <TableHead className="sticky top-0 left-0 z-30 bg-background">
+              <TableHead className="sticky top-0 left-0 z-20 bg-background">
                 보컬
               </TableHead>
 
-              <TableHead className="sticky top-0 left-0 z-30 bg-background">
+              <TableHead className="sticky top-0 left-0 z-20 bg-background">
                 필요세션
               </TableHead>
 
