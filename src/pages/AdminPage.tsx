@@ -138,7 +138,7 @@ export default function AdminPage() {
                   const isRowHighlighted = rowIndex % 2 === 0;
                   const isColHighlighted = userIndex % 2 === 0;
                   const isNeeded = song.requiredParts.some(
-                    (part) => part.session === user.primarySession
+                    (part) => part.session === user.primarySession || user.primarySession === "VOCAL"
                   );
 
                   let cellBg = "bg-background";
